@@ -296,5 +296,120 @@ namespace AbcArbitrage.Homework.Routing
             // Assert
             Assert.Equal(new[] { clientId }, clientIds);
         }
+
+        [Theory]
+        [InlineData("NYSE")]
+        [InlineData("NASDAQ.AMZN")]
+        [InlineData("NYSE.MSFT")]
+        [InlineData("*.AMZN")]
+        [InlineData("NYSE.*")]
+        [InlineData("*.NASDAQ")]
+        [InlineData("MSFT.NASDAQ")]
+        public void ShouldExcludeSubscriptionWithContentPatern(string contentPattern)
+        {
+            // Arrange
+            var clientId = new ClientId("Client.1");
+            _subscriptionIndex.AddSubscriptions(new[]
+            {
+                Subscription.Of<RoutableMessages.PriceUpdated>(clientId, ContentPattern.Split(contentPattern)),
+            });
+            var routableMessage = new RoutableMessages.PriceUpdated { ExchangeCode = "NASDAQ", Symbol = "MSFT" };
+
+            // Act
+            var messageTypeId = MessageTypeId.FromMessage(routableMessage);
+            var messageContent = MessageRoutingContent.FromMessage(routableMessage);
+            var subscriptionFounded = _subscriptionIndex.FindSubscriptions(messageTypeId, messageContent).ToList();
+
+            // Assert
+            Assert.Empty(subscriptionFounded);
+        }
+
+        [Theory]
+        [InlineData("NASDAQ")]
+        [InlineData("NASDAQ.42")]
+        [InlineData("NASDAQ.*.*.*.MSFT")]
+        [InlineData("NASDAQ.42.TECH.L.MSFT")]
+        [InlineData("*")]
+        [InlineData("*.*.*.*.MSFT")]
+        [InlineData("*.*")]
+        [InlineData("*.42.*.*.*")]
+        [InlineData("*.*.*.*.*")]
+        public void ShouldIncludeSubscriptionWithContentPatern(string contentPattern)
+        {
+            // Arrange
+            var clientId = new ClientId("Client.1");
+            var subscription = Subscription.Of<RoutableMessages.InstrumentConnected>(clientId, ContentPattern.Split(contentPattern));
+
+            var otherClientId = new ClientId("Client.2");
+            var otherSubscription = Subscription.Of<RoutableMessages.InstrumentConnected>(otherClientId, ContentPattern.Split("NYSE.*.*.*.*"));
+
+            _subscriptionIndex.AddSubscriptions(new[] { subscription, otherSubscription });
+
+            var routableMessage = new RoutableMessages.InstrumentConnected { ExchangeCode = "NASDAQ", ProviderId = 42, Sector = "TECH", SymbolRangeStart = 'L', Symbol = "MSFT" };
+
+            // Act
+            var messageTypeId = MessageTypeId.FromMessage(routableMessage);
+            var messageContent = MessageRoutingContent.FromMessage(routableMessage);
+            var subscriptionFounded = _subscriptionIndex.FindSubscriptions(messageTypeId, messageContent).ToList();
+
+            // Assert
+            Assert.Equal(new[] { subscription }, subscriptionFounded);
+        }
+
+        [Fact]
+        public void ShouldRemoveListOfSubscriptions()
+        {
+            // Arrange
+            var clientId1 = new ClientId("Client.1");
+            var clientId2 = new ClientId("Client.2");
+            _subscriptionIndex.AddSubscriptions(new[]
+            {
+                Subscription.Of<RoutableMessages.PriceUpdated>(clientId1, new ContentPattern("NASDAQ")),
+                Subscription.Of<RoutableMessages.PriceUpdated>(clientId2, new ContentPattern("NYSE")),
+                Subscription.Of<RoutableMessages.PriceUpdated>(clientId2, new ContentPattern("*")),
+            });
+
+            var subscriptionsToRemove = new[]
+            {
+                Subscription.Of<RoutableMessages.PriceUpdated>(clientId1, new ContentPattern("NASDAQ")),
+                Subscription.Of<RoutableMessages.PriceUpdated>(clientId2, new ContentPattern("*")),
+            };
+
+            // Act
+            _subscriptionIndex.RemoveSubscriptions(subscriptionsToRemove);
+            var newsupcriptions = _subscriptionIndex.GetSubscriptions().ToList();
+            var size = newsupcriptions.Count;
+            var oldClient = newsupcriptions.FirstOrDefault().ConsumerId;
+
+            // Assert
+            Assert.Equal(1, size);
+            Assert.Equal(clientId2.ToString(), oldClient.ToString());
+        }
+
+        [Fact]
+        public void ShouldRemoveSubscriptionByConsumer()
+        {
+            // Arrange
+            var clientId1 = new ClientId("Client.1");
+            var clientId2 = new ClientId("Client.2");
+            var clientId3 = new ClientId("Client.3");
+            _subscriptionIndex.AddSubscriptions(new[]
+            {
+                Subscription.Of<RoutableMessages.PriceUpdated>(clientId1, new ContentPattern("NASDAQ.*.*")),
+                Subscription.Of<RoutableMessages.PriceUpdated>(clientId2, new ContentPattern("NYSE")),
+                Subscription.Of<RoutableMessages.PriceUpdated>(clientId2, new ContentPattern("NASDAQ.AMZN")),
+                Subscription.Of<RoutableMessages.PriceUpdated>(clientId3, new ContentPattern("*")),
+            });
+
+            // Act
+            _subscriptionIndex.RemoveSubscriptionsForConsumer(clientId2);
+            var newsupcriptions = _subscriptionIndex.GetSubscriptions().ToList();
+            var size = newsupcriptions.Count;
+            var oldClientIds = _subscriptionIndex.GetSubscriptions().ToList().Select(s => s.ConsumerId);
+
+            // Assert
+            Assert.Equal(2, size);
+            Assert.Equal(new[] { clientId1, clientId3 }, oldClientIds);
+        }
     }
 }

@@ -19,14 +19,25 @@ namespace AbcArbitrage.Homework.Routing
             _subscriptions = _subscriptions.Concat(subscriptions);
         }
 
+        public IEnumerable<Subscription> GetSubscriptions()
+        {
+            return _subscriptions;
+        }
+
         public void RemoveSubscriptions(IEnumerable<Subscription> subscriptions)
         {
             // TODO
+
+            if(subscriptions == null) return;
+            _subscriptions = _subscriptions.Except(subscriptions);
         }
 
         public void RemoveSubscriptionsForConsumer(ClientId consumer)
         {
             // TODO
+
+            if (consumer.Equals(null)) return;
+            _subscriptions = _subscriptions.Where(s => !s.ConsumerId.Equals(consumer));
         }
 
         public IEnumerable<Subscription> FindSubscriptions(MessageTypeId messageTypeId, MessageRoutingContent routingContent)
