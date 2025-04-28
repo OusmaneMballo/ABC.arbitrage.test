@@ -43,6 +43,7 @@ namespace AbcArbitrage.Homework.Routing
         public IEnumerable<Subscription> FindSubscriptions(MessageTypeId messageTypeId, MessageRoutingContent routingContent)
         {
             // TODO
+
             if (string.IsNullOrEmpty(messageTypeId.ToString()) && routingContent.Parts!.Count() == 0)
             {
                 yield break;
@@ -51,7 +52,7 @@ namespace AbcArbitrage.Homework.Routing
             {
                 if (s.MessageTypeId!.Equals(messageTypeId))
                 {
-                    if(s.ContentPattern.Equals(ContentPattern.Any))
+                    if (s.ContentPattern.Equals(ContentPattern.Any))
                     {
                         yield return s;
                     }

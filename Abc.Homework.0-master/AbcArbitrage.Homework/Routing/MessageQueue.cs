@@ -20,7 +20,7 @@ namespace AbcArbitrage.Homework.Routing
             // TODO
 
             var key = (priority, clientId);
-            var queue = _queues.GetOrAdd(key, _ => new ConcurrentQueue<IMessage>());
+            var queue = _queues.GetOrAdd(key, _ => new ConcurrentQueue<IMessage>()); //thread safe without lock more faster 
             queue.Enqueue(message);
 
         }
