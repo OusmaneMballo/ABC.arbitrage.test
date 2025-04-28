@@ -13,6 +13,8 @@ namespace AbcArbitrage.Homework.Routing
     public interface ISubscriptionIndex
     {
         void AddSubscriptions(IEnumerable<Subscription> subscriptions);
+
+        IEnumerable<Subscription> GetSubscriptions();
         void RemoveSubscriptions(IEnumerable<Subscription> subscriptions);
 
         void RemoveSubscriptionsForConsumer(ClientId consumer);
