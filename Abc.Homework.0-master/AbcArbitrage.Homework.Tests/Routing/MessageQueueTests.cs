@@ -27,7 +27,7 @@ namespace AbcArbitrage.Homework.Routing
             var result = queue.TryDequeueForClient(clientId, out var dequeue);
 
             // Assert
-            Assert.True(result);
+           Assert.True(result);
             Assert.Same(message, dequeue);
         }
 
