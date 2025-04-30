@@ -45,39 +45,41 @@ namespace AbcArbitrage.Homework.Routing
             // TODO
 
             if (string.IsNullOrEmpty(messageTypeId.ToString()) && routingContent.Parts!.Count() == 0)
-            {
                 yield break;
-            }
-            foreach (Subscription s in _subscriptions)
+
+            foreach (var s in _subscriptions)
             {
-                if (s.MessageTypeId!.Equals(messageTypeId))
+                if (!s.MessageTypeId.Equals(messageTypeId))
+                    continue;
+
+                if (s.ContentPattern.Equals(ContentPattern.Any))
                 {
-                    if (s.ContentPattern.Equals(ContentPattern.Any))
-                    {
-                        yield return s;
-                    }
-
-                    if (!s.ContentPattern.Equals(ContentPattern.Any) && !routingContent.Equals(MessageRoutingContent.Empty))
-                    {
-                        if ((s.ContentPattern.Parts!.ElementAtOrDefault(0) == "*") ||
-                            (s.ContentPattern.Parts!.ElementAtOrDefault(0) == routingContent.Parts!.ElementAt(0)))
-                        {
-                            if (s.ContentPattern.Parts!.Count == 2 && routingContent.Parts!.Count == 2)
-                            {
-                                if ((s.ContentPattern.Parts!.ElementAtOrDefault(1) == "*") ||
-                                    (s.ContentPattern.Parts!.ElementAtOrDefault(1) == routingContent.Parts!.ElementAt(1)))
-                                {
-                                    yield return s;
-                                }
-                            }
-                            else
-                            {
-                                yield return s;
-                            }
-
-                        }
-                    }
+                    yield return s;
+                    continue;
                 }
+
+                var subscriptionParts = s.ContentPattern.Parts;
+                var routingParts = routingContent.Parts;
+
+                if (subscriptionParts.Count == 0)
+                    continue;
+
+                if (routingParts == null)
+                    continue;
+
+                if (subscriptionParts[0] != "*" && subscriptionParts[0] != routingParts!.ElementAtOrDefault(0))
+                    continue;
+
+                if (subscriptionParts.Count == 2)
+                {
+                    if (routingParts!.Count < 2)
+                        continue;
+
+                    if (subscriptionParts[1] != "*" && subscriptionParts[1] != routingParts[1])
+                        continue;
+                }
+
+                yield return s;
             }
 
             yield break;

@@ -1,10 +1,9 @@
+using BenchmarkDotNet.Attributes;
 using System.Collections.Generic;
 using System.Linq;
-using BenchmarkDotNet.Attributes;
 
 namespace AbcArbitrage.Homework.Routing
 {
-    [ShortRunJob]
     public class MessageRouterBenchmarks
     {
         private readonly MessageRouter _router;

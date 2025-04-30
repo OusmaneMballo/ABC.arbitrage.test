@@ -1,14 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0; net9.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <Authors>O-Mballo</Authors>
+    <Description>The context of this exercise is a fictional messaging system.</Description>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\AbcArbitrage.Homework\AbcArbitrage.Homework.csproj" />
   </ItemGroup>
