@@ -55,9 +55,10 @@ Complete this document with your answers.
 
         var subscriptions = _subscriptionIndex.FindSubscriptions(messageTypeId, messageContent);
 
-        // Use a HashSet to avoid duplicate ConsumerIds (if applicable) and
-        // replace yield return by Select methode
+        // Use a HashSet to avoid duplicate ConsumerIds
         var consumerIds = new HashSet<ClientId>();
+
+        // replace yield return by Select methode to avoid a explicit loop for more readablitity
         return _subscriptionIndex.FindSubscriptions(messageTypeId, messageContent)
             .Where(subscription => consumerIds.Add(subscription.ConsumerId))
             .Select(s => s.ConsumerId);

@@ -36,7 +36,7 @@ namespace AbcArbitrage.Homework.Routing
 
             var subscriptions = _subscriptionIndex.FindSubscriptions(messageTypeId, messageContent);
 
-            // Use a HashSet to avoid duplicate ConsumerIds (if applicable) and
+            // Use a HashSet to avoid duplicate ConsumerIds and
             // replace yield return by Select methode
             var consumerIds = new HashSet<ClientId>();
             return _subscriptionIndex.FindSubscriptions(messageTypeId, messageContent)
