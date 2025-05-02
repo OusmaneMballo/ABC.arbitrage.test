@@ -84,5 +84,49 @@ namespace AbcArbitrage.Homework.Routing
 
             yield break;
         }
+
+        public IEnumerable<Subscription> FindSubscriptionsImproved(MessageTypeId messageTypeId, MessageRoutingContent routingContent)
+        {
+
+            if (string.IsNullOrEmpty(messageTypeId.ToString()) && routingContent.Parts!.Count() == 0)
+                yield break;
+
+            // Use PLINQ for parallel processing
+            var matchingSubscriptions = _subscriptions.AsParallel().Where(s =>
+            {
+                if (!s.MessageTypeId.Equals(messageTypeId))
+                    return false;
+
+                if (s.ContentPattern.Equals(ContentPattern.Any))
+                    return true;
+
+                var subscriptionParts = s.ContentPattern.Parts;
+                var routingParts = routingContent.Parts;
+
+                if (subscriptionParts.Count == 0 || routingParts == null)
+                    return false;
+
+                if (subscriptionParts[0] != "*" && subscriptionParts[0] != routingParts.ElementAtOrDefault(0))
+                    return false;
+
+                if (subscriptionParts.Count == 2)
+                {
+                    if (routingParts.Count < 2)
+                        return false;
+
+                    if (subscriptionParts[1] != "*" && subscriptionParts[1] != routingParts[1])
+                        return false;
+                }
+
+                return true;
+            });
+
+            foreach (var subscription in matchingSubscriptions)
+            {
+                yield return subscription;
+            }
+        }
+
+
     }
 }

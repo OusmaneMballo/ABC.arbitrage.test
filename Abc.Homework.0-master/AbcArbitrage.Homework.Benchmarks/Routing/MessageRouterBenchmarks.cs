@@ -34,6 +34,10 @@ namespace AbcArbitrage.Homework.Routing
         [Benchmark]
         public List<ClientId> GetConsumers() => _router.GetConsumers(new RoutableMessage0 { Id = 999, Value = 1234m }).ToList();
 
+
+        [Benchmark]
+        public List<ClientId> GetConsumersImproved() => _router.GetConsumersImproved(new RoutableMessage0 { Id = 999, Value = 1234m }).ToList();
+
         public class RoutableMessage0 : IRoutableMessage
         {
             public int Id { get; set; }
