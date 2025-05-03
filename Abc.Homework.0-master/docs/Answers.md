@@ -53,8 +53,6 @@ Complete this document with your answers.
         var messageTypeId = MessageTypeId.FromMessage(message);
         var messageContent = MessageRoutingContent.FromMessage(message);
 
-        var subscriptions = _subscriptionIndex.FindSubscriptions(messageTypeId, messageContent);
-
         // Use a HashSet to avoid duplicate ConsumerIds
         var consumerIds = new HashSet<ClientId>();
 

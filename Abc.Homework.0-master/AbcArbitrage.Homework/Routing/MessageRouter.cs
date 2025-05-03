@@ -3,8 +3,6 @@
 // Proprietary and confidential
 // Written by Olivier Coanet <o.coanet@abc-arbitrage.com>, 2020-10-01
 
-using System.Collections.Concurrent;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,8 +31,6 @@ namespace AbcArbitrage.Homework.Routing
         {
             var messageTypeId = MessageTypeId.FromMessage(message);
             var messageContent = MessageRoutingContent.FromMessage(message);
-
-            var subscriptions = _subscriptionIndex.FindSubscriptions(messageTypeId, messageContent);
 
             // Use a HashSet to avoid duplicate ConsumerIds and
             // replace yield return by Select methode

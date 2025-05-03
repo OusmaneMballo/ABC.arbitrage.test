@@ -10,14 +10,31 @@ namespace AbcArbitrage.Homework.Routing
 
         public MessageRouterBenchmarks()
         {
-            var subscriptionIndex = BuildSubscriptionIndex();
+            //var subscriptionIndex = BuildSubscriptionIndex();
+            var subscriptionIndex = BuildSubscriptionIndexPerformaance();
 
             _router = new MessageRouter(subscriptionIndex);
         }
 
-        private static SubscriptionIndex BuildSubscriptionIndex()
+        //private static SubscriptionIndex BuildSubscriptionIndex()
+        //{
+        //    var subscriptionIndex = new SubscriptionIndex();
+        //    var baseTypeName = typeof(RoutableMessage0).FullName!.TrimEnd('0');
+
+        //    var subscriptions = from clientIndex in Enumerable.Range(0, 30)
+        //                        let clientId = new ClientId($"Client.{clientIndex}")
+        //                        from typeIndex in Enumerable.Range(0, 10)
+        //                        let messageTypeId = new MessageTypeId($"{baseTypeName}{typeIndex}")
+        //                        from contentIndex in Enumerable.Range(0, 4_000)
+        //                        select new Subscription(clientId, messageTypeId, new ContentPattern(contentIndex.ToString()));
+
+        //    subscriptionIndex.AddSubscriptions(subscriptions);
+        //    return subscriptionIndex;
+        //}
+
+        private static SubscriptionIndexPerformance BuildSubscriptionIndexPerformaance()
         {
-            var subscriptionIndex = new SubscriptionIndex();
+            var subscriptionIndexPerformance = new SubscriptionIndexPerformance();
             var baseTypeName = typeof(RoutableMessage0).FullName!.TrimEnd('0');
 
             var subscriptions = from clientIndex in Enumerable.Range(0, 30)
@@ -27,16 +44,16 @@ namespace AbcArbitrage.Homework.Routing
                                 from contentIndex in Enumerable.Range(0, 4_000)
                                 select new Subscription(clientId, messageTypeId, new ContentPattern(contentIndex.ToString()));
 
-            subscriptionIndex.AddSubscriptions(subscriptions);
-            return subscriptionIndex;
+            subscriptionIndexPerformance.AddSubscriptions(subscriptions);
+            return subscriptionIndexPerformance;
         }
 
-        [Benchmark]
-        public List<ClientId> GetConsumers() => _router.GetConsumers(new RoutableMessage0 { Id = 999, Value = 1234m }).ToList();
+        //[Benchmark]
+        //public List<ClientId> GetConsumers() => _router.GetConsumers(new RoutableMessage0 { Id = 999, Value = 1234m }).ToList();
 
 
         [Benchmark]
-        public List<ClientId> GetConsumersImproved() => _router.GetConsumersImproved(new RoutableMessage0 { Id = 999, Value = 1234m }).ToList();
+        public List<ClientId> GetConsumers() => _router.GetConsumersImproved(new RoutableMessage0 { Id = 999, Value = 1234m }).ToList();
 
         public class RoutableMessage0 : IRoutableMessage
         {
