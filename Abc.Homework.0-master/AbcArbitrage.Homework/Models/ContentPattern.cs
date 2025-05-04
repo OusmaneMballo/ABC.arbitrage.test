@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AbcArbitrage.Homework.Routing
+namespace AbcArbitrage.Homework.Models
 {
     /// <summary>
     /// Message content pattern used for routable subscription.

@@ -3,6 +3,9 @@
 // Proprietary and confidential
 // Written by Olivier Coanet <o.coanet@abc-arbitrage.com>, 2020-10-06
 
+using AbcArbitrage.Homework.Models;
+using AbcArbitrage.Homework.Queuing;
+using AbcArbitrage.Homework.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

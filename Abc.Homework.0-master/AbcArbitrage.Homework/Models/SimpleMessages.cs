@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AbcArbitrage.Homework.Routing
+namespace AbcArbitrage.Homework.Models
 {
     internal static class SimpleMessages
     {

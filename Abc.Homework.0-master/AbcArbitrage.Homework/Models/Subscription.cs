@@ -5,7 +5,7 @@
 
 using System;
 
-namespace AbcArbitrage.Homework.Routing
+namespace AbcArbitrage.Homework.Models
 {
     /// <summary>
     /// Represents a message subscription from a consumer.
