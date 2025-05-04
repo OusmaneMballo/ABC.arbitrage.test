@@ -3,7 +3,7 @@
 // Proprietary and confidential
 // Written by Olivier Coanet <o.coanet@abc-arbitrage.com>, 2020-10-06
 
-namespace AbcArbitrage.Homework.Routing
+namespace AbcArbitrage.Homework.Models
 {
     public enum MessagePriority
     {

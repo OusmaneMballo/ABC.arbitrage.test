@@ -5,7 +5,7 @@
 
 using System;
 
-namespace AbcArbitrage.Homework.Routing
+namespace AbcArbitrage.Homework.Models
 {
     public readonly struct MessageTypeId : IEquatable<MessageTypeId>
     {

@@ -3,10 +3,12 @@
 // Proprietary and confidential
 // Written by Olivier Coanet <o.coanet@abc-arbitrage.com>, 2020-10-01
 
+using AbcArbitrage.Homework.Models;
+using AbcArbitrage.Homework.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AbcArbitrage.Homework.Routing
+namespace AbcArbitrage.Homework.Services
 {
     public class SubscriptionIndex : ISubscriptionIndex
     {

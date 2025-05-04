@@ -3,6 +3,8 @@
 // Proprietary and confidential
 // Written by Olivier Coanet <o.coanet@abc-arbitrage.com>, 2020-10-01
 
+using AbcArbitrage.Homework.Models;
+using AbcArbitrage.Homework.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,6 +18,11 @@ namespace AbcArbitrage.Homework.Routing
             _subscriptionIndex = subscriptionIndex;
         }
 
+        /// <summary>
+        /// Gets the consumers for a given message.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns>IEnumerable<ClientId></returns>
         public IEnumerable<ClientId> GetConsumers(IMessage message)
         {
             var messageTypeId = MessageTypeId.FromMessage(message);
@@ -27,6 +34,11 @@ namespace AbcArbitrage.Homework.Routing
             }
         }
 
+        /// <summary>
+        /// Gets the consumers for a given message, improved version.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns>IEnumerable<ClientId></returns>
         public IEnumerable<ClientId> GetConsumersImproved(IMessage message)
         {
             var messageTypeId = MessageTypeId.FromMessage(message);

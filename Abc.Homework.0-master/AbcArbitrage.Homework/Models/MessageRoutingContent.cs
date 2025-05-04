@@ -3,9 +3,10 @@
 // Proprietary and confidential
 // Written by Olivier Coanet <o.coanet@abc-arbitrage.com>, 2020-10-01
 
+using AbcArbitrage.Homework.Repositories;
 using System.Collections.Generic;
 
-namespace AbcArbitrage.Homework.Routing
+namespace AbcArbitrage.Homework.Models
 {
     /// <summary>
     /// String-based representation of the routable parts of a message.

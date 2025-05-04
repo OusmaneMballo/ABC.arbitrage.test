@@ -3,18 +3,23 @@
 // Proprietary and confidential
 // Written by Olivier Coanet <o.coanet@abc-arbitrage.com>, 2020-10-06
 
-using System;
+using AbcArbitrage.Homework.Models;
+using AbcArbitrage.Homework.Utilities;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
-namespace AbcArbitrage.Homework.Routing
+namespace AbcArbitrage.Homework.Queuing
 {
     public class MessageQueue
     {
         private readonly ConcurrentDictionary<(MessagePriority, ClientId), ConcurrentQueue<IMessage>> _queues = new();
-        
+
+        /// <summary>
+        /// Enqueue a message for a specific client with a given priority.
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="message"></param>
+        /// <param name="priority"></param>
         public void EnqueueForClient(ClientId clientId, IMessage message, MessagePriority priority = MessagePriority.Normal)
         {
             // TODO
@@ -25,11 +30,17 @@ namespace AbcArbitrage.Homework.Routing
 
         }
 
+        /// <summary>
+        /// Dequeue a message for a specific client.
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public bool TryDequeueForClient(ClientId clientId, [MaybeNullWhen(false)] out IMessage message)
         {
             // TODO
 
-            foreach (var priority in SortPrioritiesByDescending())
+            foreach (var priority in MessageQueueHelper.SortPrioritiesByDescending())
             {
                 var key = (priority, clientId);
 
@@ -44,11 +55,6 @@ namespace AbcArbitrage.Homework.Routing
 
             message = default;
             return false;
-        }
-
-        private static IEnumerable<MessagePriority> SortPrioritiesByDescending()
-        {
-            return Enum.GetValues<MessagePriority>().OrderByDescending(p => (int)p);
         }
     }
 }

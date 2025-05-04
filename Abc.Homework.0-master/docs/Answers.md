@@ -145,7 +145,7 @@ Complete this document with your answers.
           Parallel.ForEach(subscriptions, subscription =>
           {
 
-              if (isMatchesRoutingContent(subscription.ContentPattern, routingContent))
+              if (IsMatchesRoutingContent(subscription, messageTypeId, routingContent))
                   result.Add(subscription);
           });
 
@@ -157,8 +157,15 @@ Complete this document with your answers.
           return finalResult;
       }
 
-      private static bool isMatchesRoutingContent(ContentPattern pattern, MessageRoutingContent content)
+      private static bool IsMatchesRoutingContent(Subscription subscription, MessageTypeId messageTypeId, MessageRoutingContent content)
       {
+
+        if (!subscription.MessageTypeId.Equals(messageTypeId))
+            return false;
+
+        if (subscription.ContentPattern.Equals(ContentPattern.Any))
+            return true;
+
           var subscriptionParts = pattern.Parts;
           var routingParts = content.Parts;
 
@@ -181,8 +188,79 @@ Complete this document with your answers.
       }
     ```
 
-    With this approch, my code was running in `1.578 µs` on `.NET 8.0` and `1.426 µs` on `.NET 9.0` platform with a `2.56KB` of memory allocation.<br/> ![screen-short](./images/subsIndexCache.png)
+    With this approch, my code was running in `1.578 µs` on `.NET 8.0` and `1.426 µs` on `.NET 9.0` platform with a `2.56KB` of memory allocation.<br/> ![screen-short](./images/subsIndexCache.png) <br/>
 
+    Benchmark `List<ClientId> GetConsumers()` and `List<ClientId> GetConsumersPerformance()` <br/>![screen-short](./images/benchmarks.png)
+
+
+## D. Miscellaneous
+
+- Durring performing the test, I have tryed to reorganise the `AbcArbitrage.Homework` project to align it with the Domain Driven Design (DDD) principals.<br/> ![screen-short](./images/structur.png) <br/>
+
+- I have use also a constomize the Benchmark configuration to have more relevant information.
+```c#
+        /// <summary>
+        /// Get constom Benchmark config
+        /// </summary>
+        /// <returns>IConfig</returns>
+        public static IConfig GetConstom()
+        {
+            var job = new Job(Job.Default)
+                .WithUnrollFactor(20) //number of time to invok the bench methon per iteration.
+                .WithToolchain(InProcessEmitToolchain.Instance); //To avoid a conflict with the system anti-virus.
+            return ManualConfig.CreateEmpty()
+                //Jobs
+                .AddJob(
+                    job
+                    .WithId("j-1")
+                    .AsBaseline()
+                    .WithRuntime(CoreRuntime.Core80)
+                    .WithPlatform(Platform.X64)
+                )
+                .AddJob(
+                    job
+                    .WithId("j-2")
+                    .WithRuntime(CoreRuntime.Core90)
+                    .WithPlatform(Platform.X64)
+                )
+                //Diagnoser and output config
+                .AddDiagnoser(MemoryDiagnoser.Default)
+                .AddColumnProvider(DefaultColumnProviders.Instance)
+                .AddLogger(ConsoleLogger.Default)
+                .AddExporter(HtmlExporter.Default)
+                .AddExporter(CsvExporter.Default)
+                .AddAnalyser(GetAnalysers().ToArray());
+        }
+
+        /// <summary>
+        /// Get analyse for the custom config
+        /// </summary>
+        /// <returns>IEnumerable<IAnalyser></returns>
+        private static IEnumerable<IAnalyser> GetAnalysers()
+        {
+            yield return EnvironmentAnalyser.Default;
+            yield return OutliersAnalyser.Default;
+            yield return MinIterationTimeAnalyser.Default;
+            yield return MultimodalDistributionAnalyzer.Default;
+            yield return RuntimeErrorAnalyser.Default;
+            yield return ZeroMeasurementAnalyser.Default;
+            yield return BaselineCustomAnalyzer.Default;
+        }
+```
+In the `program.cs` file
+
+```c#
+public static class Program
+{
+    public static void Main(string[] args)
+    {
+        BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args, BenchmarkConfig.GetConstom());
+
+        Console.WriteLine("Press enter to exit...");
+        Console.ReadLine();
+    }
+}
+```
 ------
 
 ### Candidate survey (optional)
